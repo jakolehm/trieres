@@ -72,7 +72,6 @@ func (h *Host) Exec(cmd string) error {
 
 	stdout, err := session.StdoutPipe()
 	if err != nil {
-		fmt.Println("FOOO")
 		return err
 	}
 	stderr, err := session.StderrPipe()
