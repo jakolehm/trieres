@@ -49,6 +49,7 @@ func clusterUp(ctx *cli.Context) error {
 	phaseManager.AddPhase(&phases.ConnectPhase{})
 	phaseManager.AddPhase(&phases.SetupMastersPhase{})
 	phaseManager.AddPhase(&phases.SetupWorkersPhase{})
+	phaseManager.AddPhase(&phases.FetchKubeConfigPhase{})
 	phaseManager.AddPhase(&phases.DisconnectPhase{})
 
 	phaseErr := phaseManager.Run()

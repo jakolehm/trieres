@@ -96,6 +96,22 @@ func (h *Host) Exec(cmd string) error {
 	return nil
 }
 
+// Exec a command on the host and return output
+func (h *Host) ExecWithOutput(cmd string) ([]byte, error) {
+	session, err := h.sshClient.NewSession()
+	if err != nil {
+		return []byte{}, err
+	}
+	defer session.Close()
+
+	output, err := session.CombinedOutput(cmd)
+	if err != nil {
+		return []byte{}, nil
+	}
+
+	return output, nil
+}
+
 // Disconnect from the host
 func (h *Host) Disconnect() error {
 	if h.sshClient == nil {
