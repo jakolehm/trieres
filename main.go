@@ -19,7 +19,7 @@ func init() {
 
 func main() {
 	app := &cli.App{
-		Name:    "trireme",
+		Name:    "trieres",
 		Version: VERSION,
 		Usage:   "k3s cluster lifecycle management tool",
 		Commands: []*cli.Command{
