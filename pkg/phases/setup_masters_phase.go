@@ -6,9 +6,12 @@ import (
 	"github.com/jakolehm/trieres/pkg/cluster"
 	"github.com/jakolehm/trieres/pkg/hosts"
 	"github.com/sirupsen/logrus"
+	"strings"
 )
 
 type SetupMastersPhase struct{}
+
+var masterSetupCmd = "curl -sfL https://get.k3s.io | sh -s - server --agent-token %s %s"
 
 func (p *SetupMastersPhase) Title() string {
 	return "Setup k3s masters"
@@ -26,7 +29,7 @@ func (p *SetupMastersPhase) setupMaster(host *hosts.Host, config *cluster.Config
 	err := retry.Do(
 		func() error {
 			logrus.Infof("%s: setting up k3s master", host.Address)
-			setupCmd := fmt.Sprintf("curl -sfL https://get.k3s.io | sh -s - server --agent-token %s", config.Token)
+			setupCmd := fmt.Sprintf(masterSetupCmd, config.Token, strings.Join(host.ExtraArgs, " "))
 			err := host.Exec(setupCmd)
 			if err != nil {
 				logrus.Errorf("%s: failed -> %s", host.Address, err.Error())

@@ -6,10 +6,13 @@ import (
 	"github.com/jakolehm/trieres/pkg/cluster"
 	"github.com/jakolehm/trieres/pkg/hosts"
 	"github.com/sirupsen/logrus"
+	"strings"
 	"sync"
 )
 
 type SetupWorkersPhase struct{}
+
+var workerSetupCmd = "curl -sfL https://get.k3s.io | sh -s - agent --server https://%s:6443 --token %s %s"
 
 func (p *SetupWorkersPhase) Title() string {
 	return "Setup k3s workers"
@@ -33,7 +36,7 @@ func (p *SetupWorkersPhase) setupWorker(wg *sync.WaitGroup, host *hosts.Host, ma
 	err := retry.Do(
 		func() error {
 			logrus.Infof("%s: setting up k3s worker", host.Address)
-			setupCmd := fmt.Sprintf("curl -sfL https://get.k3s.io | sh -s - agent --server https://%s:6443 --token %s", master, token)
+			setupCmd := fmt.Sprintf(workerSetupCmd, master, token, strings.Join(host.ExtraArgs, " "))
 			err := host.Exec(setupCmd)
 			if err != nil {
 				logrus.Errorf("%s: failed -> %s", host.Address, err.Error())

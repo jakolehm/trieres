@@ -19,12 +19,12 @@ type RemoteHost interface {
 
 // Config for host
 type Config struct {
-	Address    string
-	User       string
-	SSHPort    int
-	SSHKeyPath string
-	Role       string
-	ExtraArgs  []string
+	Address    string   `yaml:"address"`
+	User       string   `yaml:"user"`
+	SSHPort    int      `yaml:"sshPort"`
+	SSHKeyPath string   `yaml:"sshKeyPath"`
+	Role       string   `yaml:"role"`
+	ExtraArgs  []string `yaml:"extraArgs"`
 }
 
 // Host describes connectable host
@@ -79,6 +79,7 @@ func (h *Host) Exec(cmd string) error {
 		return err
 	}
 
+	logrus.Debugf("executing command: %s", cmd)
 	if err := session.Start(cmd); err != nil {
 		return err
 	}
@@ -87,7 +88,7 @@ func (h *Host) Exec(cmd string) error {
 	outputScanner := bufio.NewScanner(multiReader)
 
 	for outputScanner.Scan() {
-		logrus.Debugf("%s:  %s", h.Address, outputScanner.Text())
+		logrus.Infof("%s:  %s", h.Address, outputScanner.Text())
 	}
 	if err := outputScanner.Err(); err != nil {
 		logrus.Errorf("%s:  %s", h.Address, err.Error())
@@ -130,6 +131,7 @@ func (c *Config) UnmarshalYAML(unmarshal func(interface{}) error) error {
 		SSHKeyPath: path.Join(homeDir, ".ssh", "id_rsa"),
 		SSHPort:    22,
 		Role:       "worker",
+		ExtraArgs:  []string{},
 	}
 
 	if err := unmarshal(&raw); err != nil {
