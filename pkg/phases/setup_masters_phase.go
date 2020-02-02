@@ -30,7 +30,7 @@ func (p *SetupMastersPhase) setupMaster(host *hosts.Host, config *cluster.Config
 		func() error {
 			logrus.Infof("%s: setting up k3s master", host.Address)
 			setupCmd := fmt.Sprintf(masterSetupCmd, config.Token, strings.Join(host.ExtraArgs, " "))
-			err := host.Exec(setupCmd)
+			err := host.Exec(setupCmd, nil)
 			if err != nil {
 				logrus.Errorf("%s: failed -> %s", host.Address, err.Error())
 			}

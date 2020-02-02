@@ -37,7 +37,7 @@ func (p *SetupWorkersPhase) setupWorker(wg *sync.WaitGroup, host *hosts.Host, ma
 		func() error {
 			logrus.Infof("%s: setting up k3s worker", host.Address)
 			setupCmd := fmt.Sprintf(workerSetupCmd, master, token, strings.Join(host.ExtraArgs, " "))
-			err := host.Exec(setupCmd)
+			err := host.Exec(setupCmd, nil)
 			if err != nil {
 				logrus.Errorf("%s: failed -> %s", host.Address, err.Error())
 			}

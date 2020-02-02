@@ -24,6 +24,7 @@ func main() {
 		Usage:   "k3s cluster lifecycle management tool",
 		Commands: []*cli.Command{
 			cmd.UpCommand(),
+			cmd.KubeconfigCommand(),
 		},
 		Flags: []cli.Flag{
 			&cli.BoolFlag{
