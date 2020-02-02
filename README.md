@@ -30,6 +30,8 @@ hosts:
 ### Fill cluster.yml example
 
 ```yaml
+token: verysecret
+version: "v1.17.2+k3s1"
 hosts:
   - address: "1.2.3.4"
     role: master
