@@ -63,14 +63,12 @@ func (h *Host) Connect() error {
 }
 
 // Exec a command on the host
-func (h *Host) Exec(cmd string, env map[string]string) error {
+func (h *Host) Exec(cmd string) error {
 	session, err := h.sshClient.NewSession()
 	if err != nil {
 		return err
 	}
 	defer session.Close()
-
-	mapEnvsToSSHSession(session, env)
 
 	stdout, err := session.StdoutPipe()
 	if err != nil {
@@ -100,14 +98,12 @@ func (h *Host) Exec(cmd string, env map[string]string) error {
 }
 
 // Exec a command on the host and return output
-func (h *Host) ExecWithOutput(cmd string, env map[string]string) ([]byte, error) {
+func (h *Host) ExecWithOutput(cmd string) ([]byte, error) {
 	session, err := h.sshClient.NewSession()
 	if err != nil {
 		return []byte{}, err
 	}
 	defer session.Close()
-
-	mapEnvsToSSHSession(session, env)
 
 	output, err := session.CombinedOutput(cmd)
 	if err != nil {
@@ -144,12 +140,4 @@ func (c *Config) UnmarshalYAML(unmarshal func(interface{}) error) error {
 
 	*c = Config(raw)
 	return nil
-}
-
-func mapEnvsToSSHSession(session *ssh.Session, env map[string]string) {
-	if env != nil {
-		for key, value := range env {
-			session.Setenv(key, value)
-		}
-	}
 }

@@ -1,14 +1,17 @@
 package cluster
 
 import (
+	"fmt"
 	"github.com/jakolehm/trieres/pkg/hosts"
 	"gopkg.in/yaml.v2"
+	"strings"
 )
 
 // Config describes cluster.yml
 type Config struct {
-	Hosts hosts.Hosts
-	Token string
+	Hosts   hosts.Hosts
+	Token   string
+	Version string
 }
 
 // FromYaml parses config from YAML
@@ -36,4 +39,14 @@ func (c *Config) WorkerHosts() hosts.Hosts {
 	}
 
 	return workers
+}
+
+func (c *Config) SetupEnvs() string {
+	var envs = []string{}
+
+	if c.Version != "" {
+		envs = append(envs, fmt.Sprintf("INSTALL_K3S_VERSION=%s", c.Version))
+	}
+
+	return strings.Join(envs, " ")
 }

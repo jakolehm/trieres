@@ -44,7 +44,7 @@ func showKubeconfig(ctx *cli.Context) error {
 	if err != nil {
 		return err
 	}
-	outputBytes, err := master.ExecWithOutput("sudo cat /etc/rancher/k3s/k3s.yaml", nil)
+	outputBytes, err := master.ExecWithOutput("sudo cat /etc/rancher/k3s/k3s.yaml")
 	if err != nil {
 		return errors.New("Cannot find kubeconfig")
 	}
