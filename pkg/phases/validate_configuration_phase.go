@@ -21,7 +21,7 @@ func (p *ValidateConfigurationPhase) Run(config *cluster.Config) error {
 		for _, host2 := range config.Hosts {
 			if host2.Address == host.Address && host2.SSHPort == host.SSHPort {
 				message := fmt.Sprintf("Duplicate address:ssh_port %s:%d", host.Address, host.SSHPort)
-				if !ContainsString(messages, message) {
+				if !p.ContainsString(messages, message) {
 					messages = append(messages, message)
 				}
 			}
@@ -38,7 +38,7 @@ func (p *ValidateConfigurationPhase) Run(config *cluster.Config) error {
 	return nil
 }
 
-func ContainsString(list []string, item string) bool {
+func (p *ValidateConfigurationPhase) ContainsString(list []string, item string) bool {
 	for _, a := range list {
 		if a == item {
 			return true
