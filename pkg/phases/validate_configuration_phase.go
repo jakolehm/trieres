@@ -17,8 +17,6 @@ func (p *ValidateConfigurationPhase) Run(config *cluster.Config) error {
 	messages := []string{}
 
 	for _, host := range config.Hosts {
-		logrus.Infof("%s: Validating", host.Address)
-
 		if host.Role != "master" && host.Role != "worker" {
 			messages = append(messages, fmt.Sprintf("%s: Invalid role: %s", host.Address, host.Role))
 		}
