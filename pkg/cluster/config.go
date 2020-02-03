@@ -2,14 +2,16 @@ package cluster
 
 import (
 	"fmt"
+	"strings"
+
+	validator "github.com/go-playground/validator/v10"
 	"github.com/jakolehm/trieres/pkg/hosts"
 	"gopkg.in/yaml.v2"
-	"strings"
 )
 
 // Config describes cluster.yml
 type Config struct {
-	Hosts   hosts.Hosts
+	Hosts   hosts.Hosts `validate:"required,dive,required,gt=0"`
 	Token   string
 	Version string
 }
@@ -17,6 +19,11 @@ type Config struct {
 // FromYaml parses config from YAML
 func (c *Config) FromYaml(data []byte) error {
 	return yaml.Unmarshal(data, c)
+}
+
+func (c *Config) Validate() error {
+	validator := validator.New()
+	return validator.Struct(c)
 }
 
 func (c *Config) MasterHosts() hosts.Hosts {
