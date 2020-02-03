@@ -46,6 +46,7 @@ func clusterUp(ctx *cli.Context) error {
 
 	phaseManager := phases.NewManager(&cluster)
 
+	phaseManager.AddPhase(&phases.ValidateConfigurationPhase{})
 	phaseManager.AddPhase(&phases.ConnectPhase{})
 	phaseManager.AddPhase(&phases.SetupMastersPhase{})
 	phaseManager.AddPhase(&phases.SetupWorkersPhase{})
