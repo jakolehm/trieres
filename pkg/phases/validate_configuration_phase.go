@@ -20,10 +20,7 @@ func (p *ValidateConfigurationPhase) Run(config *cluster.Config) error {
 		logrus.Infof("%s: Validating", host.Address)
 		for _, host2 := range config.Hosts {
 			if host2.Address == host.Address && host2.SSHPort == host.SSHPort {
-				message := fmt.Sprintf("Duplicate address:ssh_port %s:%d", host.Address, host.SSHPort)
-				if !p.ContainsString(messages, message) {
-					messages = append(messages, message)
-				}
+				messages = p.AppendUnlessContains(messages, fmt.Sprintf("Duplicate address:ssh_port %s:%d", host.Address, host.SSHPort))
 			}
 		}
 	}
