@@ -38,6 +38,15 @@ func (p *ValidateConfigurationPhase) Run(config *cluster.Config) error {
 	return nil
 }
 
+func (p *ValidateConfigurationPhase) AppendUnlessContains(list []string, item string) []string {
+	messages := []string{}
+	if p.ContainsString(list, item) {
+		return list
+	}
+	messages = append(list, item)
+	return messages
+}
+
 func (p *ValidateConfigurationPhase) ContainsString(list []string, item string) bool {
 	for _, a := range list {
 		if a == item {
