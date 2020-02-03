@@ -20,7 +20,11 @@ func (p *ValidateConfigurationPhase) Run(config *cluster.Config) error {
 		logrus.Infof("%s: Validating", host.Address)
 
 		if host.Role != "master" && host.Role != "worker" {
-			messages = p.AppendUnlessContains(messages, fmt.Sprintf("Invalid role: `%s`", host.Role))
+			messages = append(messages, fmt.Sprintf("%s: Invalid role: %s", host.Address, host.Role))
+		}
+
+		if host.SSHPort < 1 || host.SSHPort > 65535 {
+			messages = append(messages, fmt.Sprintf("%s: Invalid SSH Port: %d", host.Address, host.SSHPort))
 		}
 
 		for _, host2 := range config.Hosts {
