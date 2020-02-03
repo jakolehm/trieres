@@ -18,6 +18,11 @@ func (p *ValidateConfigurationPhase) Run(config *cluster.Config) error {
 
 	for _, host := range config.Hosts {
 		logrus.Infof("%s: Validating", host.Address)
+
+		if host.Role != "master" && host.Role != "worker" {
+			messages = p.AppendUnlessContains(messages, fmt.Sprintf("Invalid role: `%s`", host.Role))
+		}
+
 		for _, host2 := range config.Hosts {
 			if host2.Address == host.Address && host2.SSHPort == host.SSHPort {
 				messages = p.AppendUnlessContains(messages, fmt.Sprintf("Duplicate address:ssh_port %s:%d", host.Address, host.SSHPort))
