@@ -36,6 +36,9 @@ func clusterUp(ctx *cli.Context) error {
 	}
 	logrus.Infof("Loading config file: %s", configFile)
 	cluster.FromYaml(configBuffer)
+	if err := cluster.Validate(); err != nil {
+		return fmt.Errorf("cluster.yml validation failed: %s", err)
+	}
 	if cluster.Token == "" {
 		random, err := GenerateRandomString(16)
 		if err != nil {
