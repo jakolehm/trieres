@@ -1,0 +1,19 @@
+---
+kind: pipeline
+name: default
+
+platform:
+  os: linux
+  arch: amd64
+
+workspace:
+  base: /src
+  path: trieres
+
+steps:
+  - name: test
+    image: golang:1.13
+    commands:
+      - mkdir -p /go/bin
+      - go mod download
+      - make test
