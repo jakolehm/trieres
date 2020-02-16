@@ -1,6 +1,6 @@
 #!/bin/sh
 
-
+set -eox
 
 # To easily cross-compile binaries
 GO111MODULE=off go get github.com/mitchellh/gox
