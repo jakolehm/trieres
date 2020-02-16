@@ -25,3 +25,17 @@ steps:
       - ./hack/build.sh
     environment:
       BUILD_ARCHS: "linux/amd64 linux/arm64 linux/arm darwin/amd64 windows/amd64"
+    when:
+      event: tag
+  - name: publish
+    image: plugins/github-release
+    settings:
+      api_key:
+        from_secret: github_token
+      files:
+        - output/*
+    checksum:
+        - md5
+        - sha256
+    when:
+      event: tag
