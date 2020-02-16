@@ -10,7 +10,7 @@ GIT_COMMIT=$(git rev-list -1 HEAD || echo 'dirrrty')
 
 CURRENT_ARCH="$(go env GOOS)/$(go env GOARCH)"
 
-BUILD_ARCHS=${1:-$CURRENT_ARCH}
+BUILD_ARCHS=${BUILD_ARCHS:-$CURRENT_ARCH}
 
 mkdir -p output
 CGO_ENABLED=0 gox -output="output/trieres_{{.OS}}_{{.Arch}}" \

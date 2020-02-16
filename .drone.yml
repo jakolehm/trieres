@@ -22,4 +22,6 @@ steps:
   - name: build
     image: golang:1.13
     commands:
-      - ""./hack/build.sh 'linux/amd64 linux/arm64 linux/arm darwin/amd64 windows/amd64'"
+      - ./hack/build.sh
+    environment:
+      BUILD_ARCHS: "linux/amd64 linux/arm64 linux/arm darwin/amd64 windows/amd64"
