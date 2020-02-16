@@ -19,3 +19,7 @@ steps:
       - mkdir -p /go/bin
       - go mod download
       - make test
+  - name: build
+    image: golang:1.13
+    commands:
+      - ./hack/build.sh
