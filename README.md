@@ -1,5 +1,7 @@
 # Trieres
 
+[![Build Status](https://cloud.drone.io/api/badges/jakolehm/trieres/status.svg)](https://cloud.drone.io/jakolehm/trieres)
+
 Trieres is a [K3s](https://github.com/rancher/k3s) cluster lifecycle management tool.
 
 ## Usage
