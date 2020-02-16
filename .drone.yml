@@ -24,4 +24,4 @@ steps:
     commands:
       - ./hack/build.sh
     environment:
-      - BUILD_ARCHS: "linux/amd64 linux/arm64 linux/arm darwin/amd64 windows/amd64"
+      BUILD_ARCHS: "linux/amd64 linux/arm64 linux/arm darwin/amd64 windows/amd64"
