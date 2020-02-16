@@ -16,7 +16,7 @@ hosts:
 	}
 }
 
-func TestHostAddressValidationWithIP(t *testing.T) {
+func TestHostAddressValidationWithInvalidIP(t *testing.T) {
 	data := `
 hosts:
 - address: "512.1.2.3"
@@ -29,6 +29,32 @@ hosts:
 	}
 }
 
+func TestHostAddressValidationWithValidIP(t *testing.T) {
+	data := `
+hosts:
+- address: "10.10.10.10"
+`
+	c := loadYaml(t, data)
+
+	err := c.Validate()
+	if err != nil {
+		t.Error("Host with valid address should pass validation")
+	}
+}
+
+func TestHostAddressValidationWithInvalidHostname(t *testing.T) {
+	data := `
+hosts:
+- address: "1-2-foo"
+`
+	c := loadYaml(t, data)
+
+	err := c.Validate()
+	if err == nil {
+		t.Error("Host with invalid address should not pass validation")
+	}
+}
+
 func TestHostAddressValidationWithValidHostname(t *testing.T) {
 	data := `
 hosts:
@@ -38,7 +64,7 @@ hosts:
 
 	err := c.Validate()
 	if err != nil {
-		t.Error("Host with invalid address should fail validation")
+		t.Error("Host with valid address should pass validation")
 	}
 }
 
