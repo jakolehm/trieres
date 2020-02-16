@@ -9,8 +9,10 @@ import (
 	"github.com/urfave/cli/v2"
 )
 
-// VERSION gets overridden at build time using -X main.VERSION=$VERSION
-var VERSION = "dev"
+// Version gets overridden at build time using -X main.Version=$VERSION
+var (
+	Version = "dev"
+)
 
 func init() {
 	logrus.SetOutput(os.Stdout)
@@ -20,7 +22,7 @@ func init() {
 func main() {
 	app := &cli.App{
 		Name:    "trieres",
-		Version: VERSION,
+		Version: Version,
 		Usage:   "k3s cluster lifecycle management tool",
 		Commands: []*cli.Command{
 			cmd.UpCommand(),
