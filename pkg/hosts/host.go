@@ -19,7 +19,7 @@ type RemoteHost interface {
 
 // Config for host
 type Config struct {
-	Address    string   `yaml:"address" validate:"required,ip|required,fqdn"`
+	Address    string   `yaml:"address" validate:"required,ip|required,hostname_rfc1123"`
 	User       string   `yaml:"user"`
 	SSHPort    int      `yaml:"sshPort" validate:"gt=0,lte=65535"`
 	SSHKeyPath string   `yaml:"sshKeyPath" validate:"file"`
