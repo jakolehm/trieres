@@ -38,7 +38,7 @@ hosts:
 
 	err := c.Validate()
 	if err != nil {
-		t.Error("Host with invalid address should fail validation")
+		t.Error("Host with valid address should pass validation")
 	}
 }
 
