@@ -29,7 +29,7 @@ hosts:
     role: master
 ```
 
-### Fill cluster.yml example
+### Full cluster.yml example
 
 ```yaml
 token: verysecret
@@ -48,4 +48,6 @@ hosts:
     sshPort: 22
     extraArgs:
       - "--node-label foo=bar"
+manifests:
+  - ./manifests/*.yaml
 ```

@@ -28,6 +28,6 @@ func (p *DisconnectPhase) Run(config *cluster.Config) error {
 func (p *DisconnectPhase) disconnectHost(host *hosts.Host, wg *sync.WaitGroup) error {
 	defer wg.Done()
 	host.Connect()
-	logrus.Printf("%s: SSH connection closed", host.Address)
+	logrus.Printf("%s: SSH connection closed", host.FullAddress())
 	return nil
 }

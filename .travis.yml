@@ -1,0 +1,23 @@
+language: go
+sudo: required
+go: 1.13
+stages:
+  - name: e2e
+    if: type IN (pull_request, cron)
+jobs:
+  include:
+    - stage: e2e
+      name: "e2e: ubuntu 18.04"
+      script: ./e2e/travis.sh
+      env:
+        - FOOTLOOSE_IMAGE=quay.io/footloose/ubuntu18.04
+    - stage: e2e
+      name: "e2e: centos7"
+      script: ./e2e/travis.sh
+      env:
+        - FOOTLOOSE_IMAGE=quay.io/footloose/centos7
+    - stage: e2e
+      name: "e2e: debian10"
+      script: ./e2e/travis.sh
+      env:
+        - FOOTLOOSE_IMAGE=quay.io/footloose/debian10
