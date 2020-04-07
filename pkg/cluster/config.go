@@ -11,9 +11,10 @@ import (
 
 // Config describes cluster.yml
 type Config struct {
-	Hosts   hosts.Hosts `validate:"required,dive,required,gt=0"`
-	Token   string
-	Version string
+	Hosts     hosts.Hosts `validate:"required,dive,required,gt=0"`
+	Token     string      `validate:"omitempty,gt=12"`
+	Manifests []string
+	Version   string
 }
 
 // FromYaml parses config from YAML

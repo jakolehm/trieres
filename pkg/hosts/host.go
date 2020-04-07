@@ -5,8 +5,13 @@ import (
 	"fmt"
 	"io"
 	"io/ioutil"
+	"os"
 	"path"
+	"strconv"
+	"strings"
+	"time"
 
+	"github.com/bramvdbogaerde/go-scp"
 	"github.com/mitchellh/go-homedir"
 	"github.com/sirupsen/logrus"
 	"golang.org/x/crypto/ssh"
@@ -19,21 +24,43 @@ type RemoteHost interface {
 
 // Config for host
 type Config struct {
-	Address    string   `yaml:"address" validate:"required,hostname|ip"`
-	User       string   `yaml:"user"`
-	SSHPort    int      `yaml:"sshPort" validate:"gt=0,lte=65535"`
-	SSHKeyPath string   `yaml:"sshKeyPath" validate:"file"`
-	Role       string   `yaml:"role" validate:"oneof=master worker"`
-	ExtraArgs  []string `yaml:"extraArgs"`
+	Address          string   `yaml:"address" validate:"required,hostname|ip"`
+	User             string   `yaml:"user"`
+	SSHPort          int      `yaml:"sshPort" validate:"gt=0,lte=65535"`
+	SSHKeyPath       string   `yaml:"sshKeyPath" validate:"file"`
+	Role             string   `yaml:"role" validate:"oneof=master worker"`
+	ExtraArgs        []string `yaml:"extraArgs"`
+	PrivateInterface string   `validate:"omitempty,gt=2"`
+}
+
+// HostMetadata resolved metadata for host
+type HostMetadata struct {
+	Hostname        string
+	InternalAddress string
 }
 
 // Host describes connectable host
 type Host struct {
 	Config
 	sshClient *ssh.Client
+	Metadata  *HostMetadata
 }
 
+// Hosts array of hosts
 type Hosts []*Host
+
+// FullAddress returns address and non-standard ssh port
+func (h *Host) FullAddress() string {
+	address := h.Address
+	if h.Metadata != nil {
+		address = h.Metadata.Hostname
+	}
+	if h.SSHPort != 22 {
+		address = fmt.Sprintf("%s:%s", address, strconv.Itoa(h.SSHPort))
+	}
+
+	return address
+}
 
 // Connect to the host
 func (h *Host) Connect() error {
@@ -88,29 +115,46 @@ func (h *Host) Exec(cmd string) error {
 	outputScanner := bufio.NewScanner(multiReader)
 
 	for outputScanner.Scan() {
-		logrus.Infof("%s:  %s", h.Address, outputScanner.Text())
+		logrus.Debugf("%s:  %s", h.FullAddress(), outputScanner.Text())
 	}
 	if err := outputScanner.Err(); err != nil {
-		logrus.Errorf("%s:  %s", h.Address, err.Error())
+		logrus.Errorf("%s:  %s", h.FullAddress(), err.Error())
 	}
 
 	return nil
 }
 
-// Exec a command on the host and return output
-func (h *Host) ExecWithOutput(cmd string) ([]byte, error) {
+// ExecWithOutput execs a command on the host and return output
+func (h *Host) ExecWithOutput(cmd string) (string, error) {
 	session, err := h.sshClient.NewSession()
 	if err != nil {
-		return []byte{}, err
+		return "", err
 	}
 	defer session.Close()
 
 	output, err := session.CombinedOutput(cmd)
 	if err != nil {
-		return []byte{}, nil
+		return "", nil
 	}
 
-	return output, nil
+	return strings.TrimSpace(string(output)), nil
+}
+
+// CopyFile copies a local file to host
+func (h *Host) CopyFile(file os.File, remotePath string, permissions string) error {
+	session, err := h.sshClient.NewSession()
+	if err != nil {
+		return err
+	}
+	defer session.Close()
+
+	scpClient := scp.Client{
+		Session:      session,
+		Timeout:      time.Second * 60,
+		RemoteBinary: "scp",
+	}
+
+	return scpClient.CopyFromFile(file, remotePath, permissions)
 }
 
 // Disconnect from the host
@@ -122,20 +166,25 @@ func (h *Host) Disconnect() error {
 	return h.sshClient.Close()
 }
 
+// UnmarshalYAML unmarshals yaml
 func (c *Config) UnmarshalYAML(unmarshal func(interface{}) error) error {
 	type rawConfig Config
 	homeDir, _ := homedir.Dir()
 	raw := rawConfig{
-		Address:    "127.0.0.1",
-		User:       "root",
-		SSHKeyPath: path.Join(homeDir, ".ssh", "id_rsa"),
-		SSHPort:    22,
-		Role:       "worker",
-		ExtraArgs:  []string{},
+		Address:          "127.0.0.1",
+		User:             "root",
+		SSHKeyPath:       path.Join(homeDir, ".ssh", "id_rsa"),
+		SSHPort:          22,
+		Role:             "worker",
+		ExtraArgs:        []string{},
+		PrivateInterface: "eth0",
 	}
 
 	if err := unmarshal(&raw); err != nil {
 		return err
+	}
+	if strings.HasPrefix(raw.SSHKeyPath, "~") {
+		raw.SSHKeyPath = path.Join(homeDir, raw.SSHKeyPath[2:])
 	}
 
 	*c = Config(raw)

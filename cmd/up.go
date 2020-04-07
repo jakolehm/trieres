@@ -50,7 +50,9 @@ func clusterUp(ctx *cli.Context) error {
 	phaseManager := phases.NewManager(&cluster)
 
 	phaseManager.AddPhase(&phases.ConnectPhase{})
+	phaseManager.AddPhase(&phases.GatherHostFactsPhase{})
 	phaseManager.AddPhase(&phases.SetupMastersPhase{})
+	phaseManager.AddPhase(&phases.CopyManifestsPhase{})
 	phaseManager.AddPhase(&phases.SetupWorkersPhase{})
 	phaseManager.AddPhase(&phases.DisconnectPhase{})
 

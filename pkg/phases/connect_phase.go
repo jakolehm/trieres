@@ -30,19 +30,19 @@ func (p *ConnectPhase) connectHost(host *hosts.Host, wg *sync.WaitGroup) error {
 	defer wg.Done()
 	err := retry.Do(
 		func() error {
-			logrus.Infof("%s: opening SSH connection", host.Address)
+			logrus.Infof("%s: opening SSH connection", host.FullAddress())
 			err := host.Connect()
 			if err != nil {
-				logrus.Errorf("%s: failed to connect -> %s", host.Address, err.Error())
+				logrus.Errorf("%s: failed to connect -> %s", host.FullAddress(), err.Error())
 			}
 			return err
 		},
 	)
 	if err != nil {
-		logrus.Errorf("%s: failed to open connection", host.Address)
+		logrus.Errorf("%s: failed to open connection", host.FullAddress())
 		return err
 	}
 
-	logrus.Printf("%s: SSH connection opened", host.Address)
+	logrus.Printf("%s: SSH connection opened", host.FullAddress())
 	return nil
 }
