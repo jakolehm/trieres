@@ -1,0 +1,7 @@
+apiVersion: helm.cattle.io/v1
+kind: HelmChart
+metadata:
+  name: redis
+  namespace: kube-system
+spec:
+  chart: stable/redis
