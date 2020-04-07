@@ -1,0 +1,34 @@
+cluster:
+  name: trieres
+  privateKey: ~/.ssh/id_rsa
+machines:
+- count: 1
+  backend: docker
+  spec:
+    image: quay.io/footloose/ubuntu1804
+    name: master%d
+    privileged: true
+    volumes:
+    - type: volume
+      destination: /var/lib/rancher
+    - type: volume
+      destination: /var/lib/containerd
+    portMappings:
+    - containerPort: 22
+      hostPort: 9022
+    - containerPort: 6443
+      hostPort: 6443
+- count: 2
+  backend: docker
+  spec:
+    image: quay.io/footloose/ubuntu1804
+    name: worker%d
+    privileged: true
+    volumes:
+    - type: volume
+      destination: /var/lib/rancher
+    - type: volume
+      destination: /var/lib/containerd
+    portMappings:
+    - containerPort: 22
+      hostPort: 9022
